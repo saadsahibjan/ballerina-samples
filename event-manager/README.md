@@ -12,13 +12,13 @@ Following are the articles on this scenario.
 - Integration with Ballerina-IV - Use-case-3 - Working with Ballerina Gmail Connector
 
 ### High Level Diagram of Event Management Scenario
-![event-manager-scenario](images/event-manager-scenario.png "event-manager-scenario")
+![event-manager-scenario](../images/event-manager-scenario.png "event-manager-scenario")
 
 ### Use-case-1 — Working with Ballerina Message Broker
-![event-manager-usecase1](images/event-manager-usecase1.png "event-manager-usecase1")
+![event-manager-usecase1](../images/event-manager-usecase1.png "event-manager-usecase1")
 
 ### Use-case-2 — Database Interaction with Ballerina
-![event-manager-usecase2](images/event-manager-usecase2.png "event-manager-usecase2")
+![event-manager-usecase2](../images/event-manager-usecase2.png "event-manager-usecase2")
 
 ### Use-case-3 — Sending Email through Ballerina Gmail Connector
-![event-manager-usecase3](images/event-manager-usecase3.png "event-manager-usecase3")
+![event-manager-usecase3](../images/event-manager-usecase3.png "event-manager-usecase3")
