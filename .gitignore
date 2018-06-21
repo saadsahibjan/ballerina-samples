@@ -1,0 +1,5 @@
+#Target directory
+target/
+
+# Log file
+*.log
