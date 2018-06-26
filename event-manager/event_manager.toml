@@ -1,0 +1,5 @@
+[project]
+version = "0.0.1"
+authors = ["Saad"]
+repository = "https://github.com/saadsahibjan/ballerina-samples"
+license = "Apache-2.0"
