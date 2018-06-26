@@ -119,6 +119,7 @@ function insertData (string email, string name, string company, boolean response
         }
         error err => {
             insertStatus = { "code": 500, "status": "Failed", "error": err.message };
+            log:printError("Error trying to insert user", err = err);
         }
     }
     return insertStatus;
@@ -135,6 +136,7 @@ function updateData (string email, string name, string company, boolean response
         }
         error err => {
             updateStatus = { "code": 500, "status": "Failed", "error": err.message };
+            log:printError("Error trying to update user", err = err);
         }
     }
     return updateStatus;
@@ -152,6 +154,7 @@ function retrieveAcceptedUserCount () returns (json) {
         }
         error err => {
             value = { "code": 500, "status": "Failed", "error": err.message };
+            log:printError("Error trying to retreive accepted user count", err = err);
         }
     }
     return value;
