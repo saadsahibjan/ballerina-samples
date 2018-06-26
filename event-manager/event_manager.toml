@@ -4,6 +4,9 @@ authors = ["Saad"]
 repository = "https://github.com/saadsahibjan/ballerina-samples"
 license = "Apache-2.0"
 
+[event_manager]
+seats = 50
+
 [event_db]
 DATABASE_HOST = "localhost"
 DATABASE_PORT = 3306
