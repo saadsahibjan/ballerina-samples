@@ -2,7 +2,6 @@ import ballerina/mb;
 import ballerina/http;
 import ballerina/internal;
 import ballerina/log;
-import ballerina/io;
 import ballerina/config;
 
 endpoint mb:SimpleQueueReceiver invitationAcknowledgeQueueReceiver {
