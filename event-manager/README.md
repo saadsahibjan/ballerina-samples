@@ -7,8 +7,8 @@ An article series is written to explain an end to end event management scenario 
 Following are the articles on this scenario.
 
 - [Integration with Ballerina-I - Introuction-Scenario](https://medium.com/@saad.sahibjan/integration-with-ballerina-i-1947295b340c)
-- Integration with Ballerina-II - Use-case-1 - Working with Ballerina Message Broker
-- Integration with Ballerina-III - Use-case-2 - Database Interaction
+- [Integration with Ballerina-II - Use-case-1 - Working with Ballerina Message Broker](https://medium.com/@saad.sahibjan/integration-with-ballerina-ii-89020373039b)
+- [Integration with Ballerina-III - Use-case-2 - Database Interaction](https://medium.com/@saad.sahibjan/integration-with-ballerina-iii-e86748959cbd)
 - Integration with Ballerina-IV - Use-case-3 - Working with Ballerina Gmail Connector
 
 ### High Level Diagram of Event Management Scenario
