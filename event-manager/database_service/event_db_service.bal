@@ -4,7 +4,7 @@ import ballerina/mysql;
 import ballerina/config;
 import ballerina/log;
 
-type User {
+type User record {
     string email;
     string name;
     string company;
@@ -101,8 +101,8 @@ service<http:Service> eventDBService bind eventDBServiceEndpoint {
         if (statusCode != 200) {
             userCountResponse.statusCode = statusCode;
         }
-        userCountResponse.setJsonPayload(jsonResponse, contentType = "application/json");
-        caller -> respond(userCountResponse) but {
+        userCountResponse.setJsonPayload(untaint jsonResponse);
+        caller -> respond(untaint userCountResponse) but {
             error e => log:printError("Error sending response back to the caller", err = e)
         };
     }
