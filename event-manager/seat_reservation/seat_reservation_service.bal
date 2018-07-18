@@ -3,6 +3,7 @@ import ballerina/http;
 import ballerina/internal;
 import ballerina/log;
 import ballerina/config;
+import wso2/gmail;
 
 endpoint mb:SimpleQueueReceiver invitationAcknowledgeQueueReceiver {
     host: "localhost",
@@ -14,11 +15,25 @@ endpoint http:Client eventDbServiceEndpoint {
     url: "http://localhost:9091/event"
 };
 
+endpoint gmail:Client gmailClient {
+    clientConfig: {
+        auth: {
+            accessToken: config:getAsString("event_mail.ACCESS_TOKEN"),
+            refreshToken: config:getAsString("event_mail.REFRESH_TOKEN"),
+            clientId: config:getAsString("event_mail.CLIENT_ID"),
+            clientSecret: config:getAsString("event_mail.CLIENT_SECRET")
+        }
+    }
+};
+
+
 service<mb:Consumer> seatReservationListener bind invitationAcknowledgeQueueReceiver {
     onMessage (endpoint consumer, mb:Message mbMessage) {
         string textPayload = check mbMessage.getTextMessageContent();
         int noOfSeats = config:getAsInt("event_manager.seats");
         json jsonPayload =  stringToBoolean(textPayload);
+        string userEmail = check <string>jsonPayload.email;
+        string userName = check <string>jsonPayload.name;
         string requestType = check <string>jsonPayload["type"];
         string errMsg = "Error occurred while processing the request ";
         if (<boolean>jsonPayload.response == true) { 
@@ -33,11 +48,14 @@ service<mb:Consumer> seatReservationListener bind invitationAcknowledgeQueueRece
                         int seatCount = check <int>responsePayload.records;
                         if (seatCount < noOfSeats) {
                             log:printDebug("Seats available for reservation");
-                            sendRequest(requestType, jsonPayload, errMsg);
-                            //send email
+                            if (sendRequest(requestType, jsonPayload, errMsg)) {
+                                string emailMessage = "A seat has been reserved for you.";
+                                sendEmail(userEmail, getEmailTemplate(userName, emailMessage));
+                            }
                         } else {
                             log:printDebug("Seats not available for reservation");
-                            //send email no seats
+                            string emailMessage = "Seats not available for reservation. Sorry for the inconvenience!";
+                            sendEmail(userEmail, getEmailTemplate(userName, emailMessage));
                         }
                     } else {
                         log:printError(errMsg + responsePayload.toString());
@@ -51,8 +69,10 @@ service<mb:Consumer> seatReservationListener bind invitationAcknowledgeQueueRece
             }
         } else {
             log:printDebug("Invitation Response: No");
-            sendRequest(requestType, jsonPayload, errMsg);
-            //send email no seats
+            if (sendRequest(requestType, jsonPayload, errMsg)) {
+                string emailMessage = "No seat has been reserverd for you.";
+                sendEmail(userEmail, getEmailTemplate(userName, emailMessage));
+            }
         }
     }
 }
@@ -71,18 +91,18 @@ function stringToBoolean(string textPayload) returns (json) {
     return jsonPayload;
 }
 
-function sendRequest(string requestType, json jsonPayload, string errMsg) {
+function sendRequest(string requestType, json jsonPayload, string errMsg) returns (boolean) {
     if (requestType == "new") {
-        sendInsertOrUpdateRequest(jsonPayload, "POST", errMsg);
+        return sendInsertOrUpdateRequest(jsonPayload, "POST", errMsg);
     } else if (requestType == "update") {
-        sendInsertOrUpdateRequest(jsonPayload, "PUT", errMsg);
+        return sendInsertOrUpdateRequest(jsonPayload, "PUT", errMsg);
     } else {
         log:printError("Invalid invitation request type found. Type should be 'new' or 'update', found " + requestType);
-        done;
+        return false;
     }
 }
 
-function sendInsertOrUpdateRequest(json jsonPayload, string method, string errMsg) {
+function sendInsertOrUpdateRequest(json jsonPayload, string method, string errMsg) returns (boolean) {
     http:Request userRequest = new;
     userRequest.setJsonPayload(jsonPayload, contentType = "application/json");
     var UserResponse = eventDbServiceEndpoint->execute(method, "/users", userRequest);
@@ -92,14 +112,45 @@ function sendInsertOrUpdateRequest(json jsonPayload, string method, string errMs
             json responsePayload = check resp.getJsonPayload();
             if (resp.statusCode == 200 && <int>responsePayload.code == 200) {
                 log:printDebug("Successfully inserted or updated");
+                return true;
             } else {
                 log:printError(errMsg + responsePayload.toString());
-                done;
+                return false;
             }
         }
         error e => {
             log:printError(errMsg, err = e);
-            done;
+            return false;
         }
     } 
+}
+
+function getEmailTemplate(string userName, string message) returns (string) {
+    string emailTemplate = "<p> Hi " + userName + ", </p>";
+    emailTemplate = emailTemplate + "<p> Thanks for your response! </p>";
+    emailTemplate = emailTemplate + "<p> " + message + " </p>";
+    emailTemplate = emailTemplate + "<p> Regards, <br/> Event Management Team </p>";
+    return emailTemplate;
+}
+
+function sendEmail(string userEmail, string messageBody) {
+    gmail:MessageRequest messageRequest;
+    messageRequest.recipient = userEmail;
+    messageRequest.sender = config:getAsString("event_mail.SENDER");
+    messageRequest.subject = "Confirmation on Event Reservation";
+    messageRequest.messageBody = messageBody;
+    messageRequest.contentType = gmail:TEXT_HTML;
+
+    var mailResponse = gmailClient->sendMessage(config:getAsString("event_mail.USER_ID"), messageRequest); 
+    match mailResponse {
+        (string, string) mailStatus => {
+            string messageId;
+            string threadId;
+            (messageId, threadId) = mailStatus;
+            log:printDebug("Email sent to " + userEmail + " with message ID: " + messageId + " and thread ID: " + threadId);
+        }
+        gmail:GmailError e => {
+            log:printError(e.message, err = e);
+        }
+    }
 }
