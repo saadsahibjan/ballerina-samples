@@ -1,6 +1,6 @@
 # Event Manager
 
-Version: Ballerina 0.970.1
+Version: Ballerina 0.980.0
 
 An article series is written to explain an end to end event management scenario from high level to a simplified way on how Ballerina and its features can be used to provide solution to an integration scenario.
 
