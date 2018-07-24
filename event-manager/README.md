@@ -9,7 +9,7 @@ Following are the articles on this scenario.
 - [Integration with Ballerina-I - Introuction-Scenario](https://medium.com/@saad.sahibjan/integration-with-ballerina-i-1947295b340c)
 - [Integration with Ballerina-II - Use-case-1 - Working with Ballerina Message Broker](https://medium.com/@saad.sahibjan/integration-with-ballerina-ii-89020373039b)
 - [Integration with Ballerina-III - Use-case-2 - Database Interaction](https://medium.com/@saad.sahibjan/integration-with-ballerina-iii-e86748959cbd)
-- [Integration with Ballerina-IV - Use-case-3 - Working with Ballerina Gmail Connector] (https://medium.com/@saad.sahibjan/integration-with-ballerina-iv-e8904ee18c95)
+- [Integration with Ballerina-IV - Use-case-3 - Working with Ballerina Gmail Connector](https://medium.com/@saad.sahibjan/integration-with-ballerina-iv-e8904ee18c95)
 
 ### High Level Diagram of Event Management Scenario
 ![event-manager-scenario](../images/event-manager-scenario.png "event-manager-scenario")
